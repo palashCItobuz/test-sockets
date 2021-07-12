@@ -66,7 +66,9 @@ const onMessage = async function (message, url, socket) {
       throw new Error(`Failed to parse message: "${message}", ${err.message}`);
     }
 
-    debug(messageType, commandPayload)
+    
+
+    debug(messageType, messageId, commandNameOrPayload, commandPayload, errorDetails)
 
     /* 
 
@@ -121,7 +123,8 @@ wss.on('connection', (socket, req) => {
 
   socket.on("error", (err) => {
     console.info(err, socket.readyState);
-  });
+  })
+
   socket.on('message', msg => {
     try{
       onMessage(msg, url, socket)
@@ -129,12 +132,13 @@ wss.on('connection', (socket, req) => {
       debug(e)
     }
   })
+
   socket.on("close", (err) => {
     const index = clients.indexOf(socket);
     clients.splice(index, 1);
     debug(`Socket closed with error: ${err}`);
     debug(clients.length)
-  });
+  })
 
   clients.push({ connection : socket, url, ip });
 
@@ -146,7 +150,7 @@ wss.on('connection', (socket, req) => {
 app.post('/send-command/:cpid', (req, res) => {
   let cpid = req.params.cpid
   let message = req.body
-  console.log(message, cpid)
+  console.log(message, clients)
   let client = clients.find(client => {
     console.log(client.url == cpid)
     return client.url == cpid
