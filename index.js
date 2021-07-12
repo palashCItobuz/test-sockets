@@ -70,8 +70,8 @@ const onMessage = async function (message, url, socket) {
   debug(messageType, messageId, commandNameOrPayload, commandPayload, errorDetails)
 
   switch (messageType) {
-    case CALL_MESSAGE:
-      switch (messageType) {
+    case 2:
+      switch (commandNameOrPayload) {
         case 'BootNotification':
           respose = '[3,"'+ messageId +'",{"status":"Accepted","currentTime":"'+ new Date().toISOString() +'","interval":300}]';
           socket.send(respose)
@@ -87,6 +87,7 @@ const onMessage = async function (message, url, socket) {
           socket.send(respose)
           break;
       }
+      break;
 
     default:
       console.log(`Wrong message type ${messageType}`)
