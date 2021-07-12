@@ -74,19 +74,18 @@ const onMessage = async function (message, url, socket) {
       switch (commandNameOrPayload) {
         case 'BootNotification':
           respose = '[3,"'+ messageId +'",{"status":"Accepted","currentTime":"'+ new Date().toISOString() +'","interval":300}]';
-          socket.send(respose)
           break;
 
         case 'Heartbeat':
           respose = '[3,"'+ messageId +'",{"currentTime":"'+ new Date().toISOString() +'"}]';
-          socket.send(respose)
           break;
 
         case 'StatusNotification':
           respose = '[3,"'+ messageId +'",{}]';
-          socket.send(respose)
           break;
       }
+      debug("<<",respose)
+      socket.send(respose)
       break;
 
     default:
