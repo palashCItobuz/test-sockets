@@ -84,7 +84,7 @@ const onMessage = async function (message, url, socket) {
           respose = '[3,"'+ messageId +'",{}]';
           break;
       }
-      debug("<<",respose)
+      console.log("<<",respose)
       socket.send(respose)
       break;
 
@@ -127,7 +127,7 @@ wss.on('connection', (socket, req) => {
 
   clients.push({ connection : socket, url, ip });
 
-  debug(clients.length)
+  debug(clients)
 
   socket.send('Hello! Message From Server!!')
 })
