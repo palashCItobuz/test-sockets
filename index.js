@@ -59,61 +59,46 @@ const onRequest = async function (client, command) {
 
 const onMessage = async function (message, url, socket) {
   let messageType, messageId, commandNameOrPayload, commandPayload, errorDetails;
-    debug(message)
-    try {
-      [messageType, messageId, commandNameOrPayload, commandPayload, errorDetails] = JSON.parse(message);
-    } catch (err) {
-      throw new Error(`Failed to parse message: "${message}", ${err.message}`);
-    }
+  debug(message)
+  let respose;
+  try {
+    [messageType, messageId, commandNameOrPayload, commandPayload, errorDetails] = JSON.parse(message);
+  } catch (err) {
+    throw new Error(`Failed to parse message: "${message}", ${err.message}`);
+  }
 
-    
+  debug(messageType, messageId, commandNameOrPayload, commandPayload, errorDetails)
 
-    debug(messageType, messageId, commandNameOrPayload, commandPayload, errorDetails)
+  switch (messageType) {
+    case CALL_MESSAGE:
+      switch (messageType) {
+        case 'BootNotification':
+          respose = '[3,"'+ messageId +'",{"status":"Accepted","currentTime":"'+ new Date().toISOString() +'","interval":300}]';
+          socket.send(respose)
+          break;
 
-    /* 
+        case 'Heartbeat':
+          respose = '[3,"'+ messageId +'",{"currentTime":"'+ new Date().toISOString() +'"}]';
+          socket.send(respose)
+          break;
 
-    switch (messageType) {
-      case CALL_MESSAGE:
-        debug(`⪢ ${url}: ${message}`);
-        const CommandModel = commands[commandNameOrPayload];
-        if (!CommandModel) {
-          console.log(`Unknown command ${commandNameOrPayload}`);
-          throw new Error(`Unknown command ${commandNameOrPayload}`);
-        }
-        let commandRequest, responseData, responseObj;
-        try {
-          commandRequest = new CommandModel(commandPayload);
-        } catch (err) {
-          console.log(err)
-          // send error if payload didn't pass the validation
-          //return await this.sendError(messageId, new OCPPError(ERROR_FORMATIONVIOLATION, err.message)); // eslint-disable-line
-        }
+        case 'StatusNotification':
+          respose = '[3,"'+ messageId +'",{}]';
+          socket.send(respose)
+          break;
+      }
 
-        try {
-          debug(commandRequest)
-         // responseData = await onRequest(socket, commandRequest);
-          //responseObj = commandRequest.createResponse(responseData);
-          //debug(responseObj)
-        } catch (err) {
-          try{
-            return await sendError(messageId, err); // eslint-disable-line
-          } catch (e) {
-            console.log("🚀 ~ file: connection.js ~ line 76 ~ Connection ~ onMessage ~ e : sendError", e)
-          }
-        }
-        break;
+    default:
+      console.log(`Wrong message type ${messageType}`)
+      throw new Error(`Wrong message type ${messageType}`)
+  }
 
-      default:
-        console.log(`Wrong message type ${messageType}`);
-        throw new Error(`Wrong message type ${messageType}`);
-
-    } */
 }
  
 wss.on('connection', (socket, req) => {
   let url, ip
   if (req) {
-    url = req && req.url ? req.url.replace('/ocpp/','') : req.url
+    url = req && req.url ? req.url.split('/').pop() : req.url
     ip = req && ((req.connection && req.connection.remoteAddress) || req.headers["x-forwarded-for"]);
     debug(`New connection from "${ip}", protocol "${socket.protocol}", url "${url}"`);
   } else {
