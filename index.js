@@ -88,6 +88,12 @@ const onMessage = async function (message, url, socket) {
       socket.send(respose)
       break;
 
+    case 3: 
+      debug(message)
+
+    case 4: 
+      debug(message) 
+
     default:
       console.log(`Wrong message type ${messageType}`)
       throw new Error(`Wrong message type ${messageType}`)
