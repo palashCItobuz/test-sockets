@@ -59,7 +59,7 @@ const onRequest = async function (client, command) {
 
 const onMessage = async function (message, url, socket) {
   let messageType, messageId, commandNameOrPayload, commandPayload, errorDetails;
-
+    debug(message)
     try {
       [messageType, messageId, commandNameOrPayload, commandPayload, errorDetails] = JSON.parse(message);
     } catch (err) {
