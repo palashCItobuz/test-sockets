@@ -83,6 +83,14 @@ const onMessage = async function (message, url, socket) {
         case 'StatusNotification':
           respose = '[3,"'+ messageId +'",{}]';
           break;
+
+        case 'MeterValues':
+          respose = '[3,"'+ messageId +'",{}]';
+          break;
+
+        case 'Authorize':
+          respose = '[3,"'+ messageId +'",{}]';
+          break;  
       }
       console.log("<<",respose)
       socket.send(respose)
@@ -141,7 +149,7 @@ wss.on('connection', (socket, req) => {
 app.post('/send-command/:cpid', (req, res) => {
   let cpid = req.params.cpid
   let message = req.body
-  console.log(message, clients)
+
   let client = clients.find(client => {
     console.log(client.url == cpid)
     return client.url == cpid
@@ -149,7 +157,7 @@ app.post('/send-command/:cpid', (req, res) => {
 
   if (client && (client.readyState === WebSocket.OPEN)) {
     console.log("<<.",message)
-    client.send(`message being sent to ${cpid}`);
+    client.send(message);
     return res.send({ status: 200, message: "sent message" });
   }
   return res.send({ status: 200, message: "not sent" })
