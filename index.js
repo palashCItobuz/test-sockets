@@ -88,9 +88,17 @@ const onMessage = async function (message, url, socket) {
           respose = '[3,"'+ messageId +'",{}]';
           break;
 
-        case 'Authorize':
+        case 'DiagnosticsStatusNotification':
           respose = '[3,"'+ messageId +'",{}]';
-          break;  
+          break;
+
+        case 'FirmwareStatusNotification':
+          respose = '[3,"'+ messageId +'",{}]';
+          break; 
+
+        case 'Authorize':
+          respose = '[3,"'+ messageId +'", {"idTagInfo":{"status":"Accepted", "expiryDate":'+ new Date().toISOString() +'}}]';
+          break; 
       }
       console.log("<<",respose)
       socket.send(respose)
