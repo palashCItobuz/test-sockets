@@ -155,7 +155,9 @@ app.post('/send-command/:cpid', (req, res) => {
     return client.url == cpid
   })
 
-  if (client && (client.readyState === WebSocket.OPEN)) {
+  console.log(client && (client.connection.readyState === WebSocket.OPEN))
+
+  if (client && (client.connection.readyState === WebSocket.OPEN)) {
     console.log("<<.",message)
     client.send(message);
     return res.send({ status: 200, message: "sent message" });
