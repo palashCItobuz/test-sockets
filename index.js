@@ -98,9 +98,11 @@ const onMessage = async function (message, url, socket) {
 
     case 3: 
       debug(message)
+      break;
 
     case 4: 
-      debug(message) 
+      debug(message)
+      break;
 
     default:
       console.log(`Wrong message type ${messageType}`)
