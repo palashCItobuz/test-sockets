@@ -68,7 +68,7 @@ const onMessage = async function (message, url, socket) {
     throw new Error(`Failed to parse message: "${message}", ${err.message}`);
   }
 
-  console.log(messageType, messageId, commandNameOrPayload, commandPayload, errorDetails)
+  console.log("..>>",message)
 
   switch (messageType) {
     case 2:
