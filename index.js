@@ -4,6 +4,7 @@ import * as WebSocket from 'ws'
 import debugFn from "debug"
 import http from 'http';
 import path from 'path';
+import moment from "moment";
 import commands from "./commands"
 //import { handlers } from "./handlers";
 import { DEBUG_LIBNAME, CALL_MESSAGE, CALLRESULT_MESSAGE, CALLERROR_MESSAGE, SOCKET_TIMEOUT } from "./constants";
@@ -20,8 +21,8 @@ const wss = new WebSocket.Server({ server });
 
 let clients = []
 
-const debug = function (logMessage) {
-  console.log(logMessage);
+const debug = function (...logMessage) {
+  console.table(logMessage);
   _debug(logMessage);
 };
 
@@ -59,7 +60,7 @@ const onRequest = async function (client, command) {
 
 const onMessage = async function (message, url, socket) {
   let messageType, messageId, commandNameOrPayload, commandPayload, errorDetails;
-  debug(message)
+
   let respose;
   try {
     [messageType, messageId, commandNameOrPayload, commandPayload, errorDetails] = JSON.parse(message);
@@ -67,7 +68,7 @@ const onMessage = async function (message, url, socket) {
     throw new Error(`Failed to parse message: "${message}", ${err.message}`);
   }
 
-  debug(messageType, messageId, commandNameOrPayload, commandPayload, errorDetails)
+  console.log(messageType, messageId, commandNameOrPayload, commandPayload, errorDetails)
 
   switch (messageType) {
     case 2:
@@ -97,26 +98,33 @@ const onMessage = async function (message, url, socket) {
           break; 
 
         case 'Authorize':
-          respose = '[3,"'+ messageId +'", {"idTagInfo":{"status":"Accepted", "expiryDate":'+ new Date().toISOString() +'}}]';
-          break; 
+          respose = '[3,"'+ messageId +'", {"idTagInfo":{"status":"Accepted", "expiryDate":"'+ moment().add(1, "months").toISOString() +'"}}]';
+          break;
+
+        case 'StartTransaction':
+          respose = '[3,"'+ messageId +'", {"idTagInfo":{"status":"Accepted", "expiryDate":"'+ moment().add(1, "months").toISOString() +'"}, "transactionId":1}]';
+          break;
+
+        case 'StopTransaction':
+          respose = '[3,"'+ messageId +'", {"idTagInfo":{"status":"Accepted", "expiryDate":"'+ moment().add(1, "months").toISOString() +'"}}]';
+          break;
       }
-      console.log("<<",respose)
+      console.log(url, "<<",respose)
       socket.send(respose)
       break;
 
-    case 3: 
-      debug(message)
+    case 3:
+      console.log(url, ">>",commandNameOrPayload, commandPayload)
       break;
 
-    case 4: 
-      debug(message)
+    case 4:
+      console.log(url, ">>",commandNameOrPayload, commandPayload)
       break;
 
     default:
       console.log(`Wrong message type ${messageType}`)
       throw new Error(`Wrong message type ${messageType}`)
   }
-
 }
  
 wss.on('connection', (socket, req) => {
@@ -143,7 +151,7 @@ wss.on('connection', (socket, req) => {
   })
 
   socket.on("close", (err) => {
-    const index = clients.indexOf(socket);
+    const index = clients.indexOf({ connection : socket, url, ip });
     clients.splice(index, 1);
     debug(`Socket closed with error: ${err}`);
     debug(clients.length)
@@ -165,10 +173,8 @@ app.post('/send-command/:cpid', (req, res) => {
     return client.url == cpid
   })
 
-  console.log(client && (client.connection.readyState === WebSocket.OPEN))
-
   if (client && (client.connection.readyState === WebSocket.OPEN)) {
-    console.log("<<.",message)
+    console.log("<<.",message, client)
     client.connection.send(message);
     return res.send({ status: 200, message: "sent message" });
   }
