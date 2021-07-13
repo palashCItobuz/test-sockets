@@ -22,7 +22,7 @@ const wss = new WebSocket.Server({ server });
 let clients = []
 
 const debug = function (...logMessage) {
-  console.table(logMessage);
+  console.log(logMessage);
   _debug(logMessage);
 };
 
@@ -107,6 +107,10 @@ const onMessage = async function (message, url, socket) {
 
         case 'StopTransaction':
           respose = '[3,"'+ messageId +'", {"idTagInfo":{"status":"Accepted", "expiryDate":"'+ moment().add(1, "months").toISOString() +'"}}]';
+          break;
+
+        case 'DataTransfer':
+          respose = '[3,"'+ messageId +'", {"status":"Accepted"}]';
           break;
       }
       console.log(url, "<<",respose)
