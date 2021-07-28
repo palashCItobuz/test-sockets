@@ -63,6 +63,7 @@ wss.on('request', (req) => {
 
     clients.push({ connection: connection, cpid, ip })
     debug(clients)
+    connection.sendUTF('Hello! Message From Server!')
 })
 
 const onMessage = async function (message, url, connection) {
@@ -121,7 +122,7 @@ const onMessage = async function (message, url, connection) {
                     break;
             }
             console.log(url, "<<", respose)
-            connection.send(respose)
+            connection.sendUTF(respose)
             break;
 
         case 3:
@@ -149,10 +150,10 @@ app.post('/send-command/:cpid', (req, res) => {
 
     if (client && (client.connection.readyState === WebSocket.OPEN)) {
         console.log("<<.", message)
-        client.connection.send(message);
+        client.connection.sendUTF(message);
         return res.send({ status: 200, message: "sent message" });
     }
     return res.send({ status: 200, message: "not sent" })
-});
+})
 
 server.listen(port, () => console.log(`http server is listening on http://localhost:${port}`))

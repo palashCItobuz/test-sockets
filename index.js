@@ -143,7 +143,7 @@ wss.on('connection', (socket, req) => {
   }
 
   socket.on("error", (err) => {
-    console.info(err, socket.readyState);
+    console.info("", err, socket.readyState);
   })
 
   socket.on('message', msg => {
