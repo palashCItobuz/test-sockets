@@ -51,10 +51,9 @@ wss.on('request', (req) => {
     })
 
     connection.on('close', function (reasonCode, description) {
-        const index = clients.find((element) => {
-            element.cpid == cpid
+        const index = clients.findIndex((element) => {
+            return element.cpid === cpid
         })
-        console.log("-------", clients[index], index)
         clients.splice(index, 1)
         debug(clients)
         console.log(`Peer "${ip}" disconnected.`, reasonCode, description)
