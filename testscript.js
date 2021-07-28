@@ -66,7 +66,7 @@ wss.on('request', (req) => {
 
     clients.push({ connection: connection, cpid, ip })
     debug(clients)
-    connection.sendUTF('Hello! Message From Server!')
+    connection.send('Hello! Message From Server!')
 })
 
 const onMessage = async function (message, url, connection) {
@@ -125,7 +125,7 @@ const onMessage = async function (message, url, connection) {
                     break;
             }
             console.log(url, "<<", respose)
-            connection.sendUTF(respose)
+            connection.send(respose)
             break;
 
         case 3:
