@@ -155,7 +155,9 @@ wss.on('connection', (socket, req) => {
   })
 
   socket.on("close", (err) => {
-    const index = clients.indexOf({ connection : socket, url, ip });
+    const index = clients.findIndex((element) => {
+      return element.url === url
+    })
     clients.splice(index, 1);
     debug(`Socket closed with error: ${err}`);
     debug(clients.length)
@@ -173,12 +175,14 @@ app.post('/send-command/:cpid', (req, res) => {
   let message = req.body
 
   let client = clients.find(client => {
-    console.log(client.url == cpid)
+    //console.log(client.url, cpid, client.url == cpid)
     return client.url == cpid
   })
 
+  if (client) console.log(client.connection.readyState, WebSocket.OPEN)
+
   if (client && (client.connection.readyState === WebSocket.OPEN)) {
-    console.log("<<.",message, client)
+    console.log("<<.", message)
     client.connection.send(message);
     return res.send({ status: 200, message: "sent message" });
   }

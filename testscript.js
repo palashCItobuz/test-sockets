@@ -47,6 +47,7 @@ wss.on('request', (req) => {
     }
 
     connection.on('message', function (message) {
+        console.log(message.type)
         onMessage(message, cpid, connection)
     })
 
@@ -60,7 +61,7 @@ wss.on('request', (req) => {
     })
 
     connection.on("error", (err) => {
-        console.info(err, connection.readyState)
+        console.info(err, cpid)
     })
 
     clients.push({ connection: connection, cpid, ip })
